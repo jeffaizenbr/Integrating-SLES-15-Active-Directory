@@ -8,7 +8,7 @@ ntpq -p
 
 # 3 - instalation of required packages 
 ```bash
-Winbind: krb5-client samba-client openldap2-client samba-winbind samba-winbind-32bit
+krb5-client samba-client openldap2-client samba-winbind samba-winbind-32bit
 ```
 
 # 4 - Edit Krb5 configuration file /etc/krb5.conf:
