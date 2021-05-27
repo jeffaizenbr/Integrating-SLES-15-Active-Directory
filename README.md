@@ -42,9 +42,9 @@ cjf.local = CJF.LOCAL
 
 ```bash
  [global]
-        workgroup = EXAMPLE
+        workgroup = CJF
         kerberos method = secrets and keytab
-        realm = EXAMPLE.COM
+        realm = CJF.LOCAL
         security = ADS
         template homedir = /home/%D/%U
         template shell = /bin/bash
@@ -54,6 +54,7 @@ cjf.local = CJF.LOCAL
         winbind enum users = yes
         idmap uid = 10000-20000
         idmap gid = 10000-20000
+
         
 ```
 # 6 - Verify your nsswtich configuration file /etc/nsswitch
