@@ -125,8 +125,8 @@ pam-config -a --mkhomedir
 # 12 - Enable and start your configured service:
 
 ```bash
-systemctl enable sssd
-systemctl start sssd
+systemctl enable winbind
+systemctl start winbind
 ```
 # 13 - sudoers content /etc/sudoers
 
