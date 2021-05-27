@@ -128,3 +128,20 @@ pam-config -a --mkhomedir
 systemctl enable sssd
 systemctl start sssd
 ```
+# 13 - sudoers content /etc/sudoers
+
+```bash
+%adm_linux ALL=(ALL) NOPASSWD: ALL
+
+%adm_app ALL=(ALL) NOPASSWD: ALL
+
+```
+
+# 14 - ssh configuration file content /etc/ssh/sshd_config
+
+```bash
+
+DenyGroups $
+AllowGroups adm_linux adm_app root
+
+```
