@@ -107,7 +107,7 @@ REFERRALS OFF
 # 9 - Establish Kerberos Connection using "kinit" with a privileged AD user 
 
 ```bash
-kinit Administrator
+kinit svc_linux
 ```
 
 # 10 - Create the computer account. The "-k" flag uses the Kerberos ticket created in the previous step for authentication. Alternatively one could use the "-U" flag with the administrative user and password.
@@ -119,21 +119,19 @@ net ads join -k
 # 11 - Configure PAM stack using pam-config:
 
 ```bash
-pam-config -a --winbind
-pam-config -a --mkhomedir
+pam-config -a --winbind ; pam-config -a --mkhomedir
 ```
 # 12 - Enable and start your configured service:
 
 ```bash
-systemctl enable winbind
-systemctl start winbind
+systemctl enable winbind ; systemctl start winbind
 ```
 # 13 - sudoers content /etc/sudoers
 
 ```bash
 %adm_linux ALL=(ALL) NOPASSWD: ALL
-
 %adm_app ALL=(ALL) NOPASSWD: ALL
+%adm_desenv ALL=(ALL) NOPASSWD: ALL
 
 ```
 
