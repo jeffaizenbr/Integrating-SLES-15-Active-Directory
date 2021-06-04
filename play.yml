@@ -1,0 +1,102 @@
+---
+- name: Put machines with SLES 15 to authenticate with AD accounts 
+  hosts: rdm
+  become: true
+  vars:
+    packages: [ 'krb5-client', 'samba-client', 'openldap2-client', 'samba-winbind', 'samba-winbind-32bit' ]
+
+  vars_prompt:
+    - name: username
+      prompt: "Enter Username"
+      private: 
+
+    - name: user_password
+      prompt: "Enter Password:"
+      private: no
+      
+
+  tasks:
+############################################
+    - name: Install required packages
+      yum:
+        name: "{{ item }}"
+      loop: "{{ packages }}"
+#############################################
+    - name: Copy krb5 configuration file
+      copy:
+        src: /home/jefferson.sousa/krb5.conf
+        dest: /etc/krb5.conf
+        owner: root
+        group: root
+        mode: 755   
+##############################################
+    - name: Copy SMB configuration file
+      copy:
+        src: /home/jefferson.sousa/smb.conf
+        dest: /etc/samba/smb.conf
+        owner: root
+        group: root
+        mode: 755
+##############################################
+    - name: Copy NSSWITCH configuration file
+      copy:
+        src: /home/jefferson.sousa/nsswitch.conf
+        dest: /etc/nsswitch.conf
+        owner: root
+        group: root
+        mode: 755
+##############################################
+    - name: Copy pam_winbind configuration file
+      copy:
+        src: /home/jefferson.sousa/pam_winbind.conf
+        dest: /etc/openldap/ldap.conf
+        owner: root
+        group: root
+        mode: 755
+##############################################
+    - name: execute command KINIT
+      shell:
+        cmd:  echo "senha" | sudo -S kinit svc_linux 2> /dev/null
+        #cmd:  echo "senha" | sudo -u luiz -c "kinit svc_linux 2> /dev/null" -s /bin/bash 
+
+##############################################
+    - name: execute command NET ADS JOIN
+      shell:
+        cmd:  net ads join -k 2> /dev/null
+##############################################
+    - name: Execute and enable winbind
+      systemd:
+        name: winbind
+        state: restarted
+        enabled: yes
+##############################################
+    - name: add group adm_linux to sudoers
+      lineinfile:
+        dest: /etc/sudoers
+        line: "%adm_linux ALL=(ALL) NOPASSWD: ALL"
+
+    - name: add group adm_app to sudoers
+      lineinfile:
+        dest: /etc/sudoers
+        line: "%adm_app ALL=(ALL) NOPASSWD: ALL"
+     
+    - name: add group adm_desenv to sudoers
+      lineinfile:
+        dest: /etc/sudoers
+        line: "%adm_desenv ALL=(ALL) NOPASSWD: ALL"
+##############################################
+    - name: prevent login to all by SSH
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        line: "DenyGroups $"
+
+    - name: permit login to allowed groups by SSH
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        line: "AllowGroups adm_linux adm_app"
+##############################################
+    - name: Execute and enable winbind
+      systemd:
+        name: sshd
+        state: restarted
+        enabled: yes
